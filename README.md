@@ -51,7 +51,10 @@ Evaluated on speech samples from the open clinical **TORGO Benchmark** (Universi
      --> Accommodates spastic hesitation and motor blocks without cutting the user off.
           │
           ▼
-  3. ASR / STT Acoustic Decoding (Local offline or low-latency cloud)
+  3. Hybrid Execution Engine (Hardware-Adaptive Spectrum)
+     ├── Tier 1: 100% Local Offline (Quantized whisper.cpp, zero keys, total privacy)
+     ├── Tier 2: BYOK (Bring-Your-Own-Key for low-spec PCs, direct zero-markup)
+     └── Tier 3: Subsidized At-Cost Cloud (For legacy budget/educational laptops)
           │
           ▼
   4. CADSR-LM Semantic Normalizer & Deterministic Guardrails
@@ -71,13 +74,19 @@ Evaluated on speech samples from the open clinical **TORGO Benchmark** (Universi
 [Clean, Formatted Text Injected at Cursor in 0.3 - 0.5s]
 ```
 
-### 3.1. Active Keyboard Layout Live Auto-Translation
+### 3.1. Hybrid Execution for Real-World Hardware Inclusion
+Disabled individuals frequently rely on subsidized or older hardware unable to process heavy local neural networks. YapClean Care bridges this with 3 tiers:
+- **Tier 1 (Local Offline, $0):** Runs completely on-device under 500 MB RAM for capable computers.
+- **Tier 2 (BYOK, $0 Platform Fee):** Direct zero-markup connection to the user's personal API keys for budget PCs.
+- **Tier 3 (Subsidized Cloud):** A non-profit managed endpoint routing speech at cost for non-technical users on legacy machines.
+
+### 3.2. Active Keyboard Layout Live Auto-Translation
 In multilingual European societies, users frequently think and speak in their mother tongue (e.g., Bulgarian, Ukrainian, German) while working in an English or host-country interface. 
 * YapClean Care automatically queries the active foreground application's keyboard layout via low-level OS APIs (`GetKeyboardLayout`).
 * When speech is detected in the speaker's native language, it seamlessly translates the normalized output into the target application's active layout language before typing.
 * Eliminates manual layout switching, copy-pasting into web translators, and mental context switching.
 
-### 3.2. Assistive Hardware Interface (Open HID)
+### 3.3. Assistive Hardware Interface (Open HID)
 Compatible with physical accessibility switches, sip-and-puff controllers, and USB foot pedals, enabling fully hands-free desktop dictation for quadriplegic and motor-impaired individuals.
 
 ---

@@ -1,5 +1,5 @@
 # YapClean Care: Scientific Dossier & Technical Specification
-## Open-Source Assistive Desktop Speech Layer for Atypical and Dysarthric Voice Input
+## Open-Source Assistive Desktop Speech Layer for Atypical, Dysarthric, and Multilingual Voice Input
 
 > **Applicant:** Taras Chernov (Natural Person / Individual Software Architect)  
 > **Location:** Sofia, Republic of Bulgaria (European Union Resident)  
@@ -17,12 +17,13 @@ Standard automatic speech recognition (ASR) engines and commercial voice dictati
 1. **Aggressive Silence Clipping:** Mainstream Voice Activity Detectors (VAD) hard-cut the audio stream after 400–600 ms of hesitation, prematurely terminating speech during spastic blocks or respiratory pauses (800–2,500 ms).
 2. **Acoustic Phonetic Hallucination:** Autoregressive foundation models collapse into repetitive hallucination loops when encountering broken syllables or slurred consonants.
 3. **The Central & Eastern European Language Gap:** While English benefits from public clinical corpora (TORGO, UASpeech), accessible speech data for Slavic and Central European languages (Bulgarian, Ukrainian, Polish) is virtually non-existent.
+4. **Hardware Disparity:** Users with disabilities frequently operate older, subsidized, or low-spec computers unable to support heavy local neural models.
 
-**YapClean Care** solves this challenge through an open-source, local-first OS assistive runtime that reconstructs non-standard speech into clean, intent-preserving text directly at the cursor of any desktop application, with real-time translation into the active keyboard layout language.
+**YapClean Care** solves this through an open-source, hybrid desktop assistive runtime that reconstructs non-standard speech into clean, intent-preserving text directly at the active cursor, featuring live translation into the active keyboard layout language.
 
 ---
 
-## 2. Empirical Benchmark Evidence
+## 2. Empirical Benchmark Evidence & Slavic Methodology
 
 ### 2.1. Clinical TORGO Benchmark: +71.8% Net Error Reduction
 Evaluated on the canonical dysarthria subset of the **University of Toronto TORGO Database** (*Rudzicz et al.*):
@@ -43,11 +44,18 @@ Evaluated on the canonical dysarthria subset of the **University of Toronto TORG
 ```
 
 ### 2.2. Multilingual Audio Benchmark (25 Test Scenarios, 5 Languages)
-To ensure robustness across diverse accents and speech artifacts, YapClean evaluated 25 audio test scenarios synthesized via **Google Gemini 3.8 Flash-Lite TTS** at studio-quality 24 kHz across Russian, Ukrainian, English, German, and Spanish:
+Evaluated across 25 audio test scenarios synthesized via **Google Gemini 3.8 Flash-Lite TTS** at studio-quality 24 kHz across Russian, Ukrainian, English, German, and Spanish:
 * **Hesitation & Self-Corrections:** **100% pass rate (5/5)** across all engines.
 * **Acoustic Noise Elimination (Coughs, Breaths, Sighs):** **100% elimination (5/5)** across all engines.
 * **Latency Profile:** Groq Llama 3.3 70B (80%, 299 ms), Groq Llama 3.1 8B (80%, 321 ms), Gemini 2.5 Flash (68%, 3,748 ms), and YapClean Local Rules (60%, **0 ms latency offline**).
 * Full report: [`docs/MULTILINGUAL_AUDIO_BENCHMARK_REPORT.md`](MULTILINGUAL_AUDIO_BENCHMARK_REPORT.md).
+
+### 2.3. Overcoming the Slavic Language Gap: Proactive Methodology
+Google's *Project Euphonia* proved that 30 minutes of speaker personalization reduces WER by 35%, but their 1M+ utterance dataset is proprietary and English-only. Clinical Slavic atypical corpora do not exist. YapClean Care solves this without requiring massive clinical datasets via a 4-step transfer methodology:
+1. **Multilingual Foundation Acoustic Transfer:** Leveraging foundation encoders (`whisper.cpp`, `parakeet-tdt`) that already contain rich phonetic representations of Slavic languages.
+2. **Synthetic Acoustic Perturbation Calibration:** Using our validated TTS generation pipeline, we synthesize controlled Slavic atypical speech (injecting slurs, prolonged vowels, and spastic hesitations) to calibrate VAD and decoding thresholds.
+3. **Cyrillic CADSR-LM Normalization:** Language-level semantic adapter that re-stitches fractured Cyrillic consonant clusters and eliminates involuntary repetitions without acoustic retraining.
+4. **Community Co-Design Calibration (Milestone 4):** Collecting targeted 15-minute calibration recordings with 20+ volunteers in Bulgaria and Ukraine to establish the first open European atypical Slavic evaluation set.
 
 ---
 
@@ -65,7 +73,10 @@ To ensure robustness across diverse accents and speech artifacts, YapClean evalu
      --> Differentiates spastic hesitation from intentional sentence termination.
           │
           ▼
-  3. ASR / STT Acoustic Decoding (Local offline or low-latency cloud)
+  3. Hybrid Execution Engine (Hardware Adaptive Spectrum)
+     ├── Tier 1: 100% Local Offline (Quantized whisper.cpp, 0 keys, 100% private)
+     ├── Tier 2: BYOK (Bring-Your-Own-Key for low-spec PCs, direct zero-markup)
+     └── Tier 3: Subsidized At-Cost Cloud (For legacy budget/educational laptops)
           │
           ▼
   4. CADSR-LM Semantic Normalizer & Deterministic Guardrails ("Do No Harm")
@@ -85,7 +96,13 @@ To ensure robustness across diverse accents and speech artifacts, YapClean evalu
 [Clean, Formatted Text Injected at Cursor in 0.3 - 0.5s]
 ```
 
-### 3.1. Key Technical Differentiators
+### 3.1. The 3-Tier Hardware-Inclusive Runtime
+Recognizing that many disabled citizens and educational institutions rely on older or budget hardware unable to run local models:
+* **Tier 1: 100% Local Offline ($0):** On capable modern PCs, quantized models run entirely on-device under 500 MB RAM without internet, keys, or accounts.
+* **Tier 2: BYOK ($0 Platform Fee):** On lower-spec machines, users can connect their own personal API keys (Groq, Google Gemini, Deepgram) directly without middleware or subscription markups.
+* **Tier 3: Subsidized At-Cost Cloud:** For non-technical users on legacy computers, an at-cost managed endpoint provides cloud inference, funded via startup cloud credits at cost with zero commercial markup.
+
+### 3.2. Key Technical Differentiators
 1. **Active Keyboard Layout Live Auto-Translation:** In multilingual European workplaces, users speak naturally in their mother tongue (e.g. Bulgarian, Ukrainian, German), and the system detects the foreground window's keyboard layout and inserts fluent, translated text directly into the application.
 2. **Zero Clipboard Pollution:** Unlike naive clipboard utilities, YapClean Care snapshots the OS clipboard, injects synthesized text via synthetic events, and restores the original clipboard contents within 35 ms.
 3. **Screen Reader Coexistence:** Interface surfaces are flagged with `WS_EX_NOACTIVATE`, guaranteeing zero focus theft from NVDA, JAWS, Narrator, or Orca.
@@ -104,7 +121,7 @@ To ensure robustness across diverse accents and speech artifacts, YapClean evalu
 | Milestone | Title & Scope | Hours | Duration | Budget |
 |---|---|---|---|---|
 | **M1** | **Core OS Audio Layer & Atypical VAD Engine**<br>Refactor low-level WASAPI / ring-buffer audio capture into a modular open-source library; calibrate 1.5s pre-roll ring buffer and dynamic VAD silence window (1.6s threshold); implement 35ms clipboard restoration. | **160 h** | Months 1–2 | **€8,000** |
-| **M2** | **CADSR-LM Semantic Normalization & Slavic Stack**<br>Implement Context-Aware Dysarthric Speech Reconstruction (CADSR-LM) with deterministic 'Do No Harm' guardrails; cross-lingual Slavic adaptation (Bulgarian, Ukrainian, Polish) via synthetic acoustic perturbation and community calibration samples; package active OS keyboard layout live translation engine; package local offline acoustic models. | **200 h** | Months 3–4 | **€10,000** |
+| **M2** | **CADSR-LM Normalization, Slavic Stack & Hybrid Engine**<br>Implement Context-Aware Dysarthric Speech Reconstruction (CADSR-LM) with deterministic 'Do No Harm' guardrails; cross-lingual Slavic adaptation (Bulgarian, Ukrainian, Polish) via synthetic acoustic perturbation and community calibration samples; package active OS keyboard layout live translation engine; implement 3-tier runtime (Local Offline, BYOK, and Subsidized Cloud hooks). | **200 h** | Months 3–4 | **€10,000** |
 | **M3** | **Assistive Hardware Interfacing & Screen Reader Harmony**<br>Native driver abstraction for assistive switches, sip-and-puff devices, and USB foot pedals (hands-free physical trigger); screen reader coexistence (`WS_EX_NOACTIVATE`); Earcon audio feedback system for visually impaired users. | **140 h** | Months 5–6 | **€7,000** |
 | **M4** | **Community Usability Testing, Packaging & Upstreaming**<br>Practical usability testing sessions with real users experiencing motor and speech differences; automated CI/CD packaging for Windows (NSIS), Linux (Flatpak/AppImage), and macOS (Homebrew/DMG); public release under dual MIT / Apache-2.0 license with developer documentation. | **100 h** | Months 7–8 | **€5,000** |
 | **Total** | **Full Delivery of YapClean Care as a Digital Public Good** | **600 h** | **8 Months** | **€30,000** |

@@ -1,0 +1,5 @@
+# YapClean Care: Core Dependencies
+# The core package uses Python standard library only (zero external runtime dependencies).
+
+# Development & Testing:
+pytest>=8.0.0
