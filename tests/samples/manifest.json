@@ -1,0 +1,30 @@
+{
+  "dataset": "TORGO (University of Toronto) via open mirror jmaczan/TORGO-very-small",
+  "license": "Academic/Research License (Rudzicz et al., 2012)",
+  "samples": [
+    {
+      "id": "torgo_0005",
+      "file_name": "0005.wav",
+      "reference": "When he speaks, his voice is just a bit cracked and quivers a trifle.",
+      "baseline_asr_hypothesis": "When Epic is light, it does a bit crack and quivers are dripple.",
+      "speaker_condition": "dysarthria (cerebral palsy / ALS acoustic characteristics)",
+      "corpus": "TORGO"
+    },
+    {
+      "id": "torgo_0011",
+      "file_name": "0011.wav",
+      "reference": "Except in the winter when the ooze or snow or ice prevents,",
+      "baseline_asr_hypothesis": "Again, in the winter window, and not our age perpents.",
+      "speaker_condition": "dysarthria (prolonged vowels and articulatory imprecision)",
+      "corpus": "TORGO"
+    },
+    {
+      "id": "torgo_0053",
+      "file_name": "0053.wav",
+      "reference": "You wished to know all about my grandfather.",
+      "baseline_asr_hypothesis": "You would do not know about it, my grandpa.",
+      "speaker_condition": "dysarthria (syllable segmentation and breath pauses)",
+      "corpus": "TORGO"
+    }
+  ]
+}
