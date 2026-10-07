@@ -76,9 +76,14 @@ Evaluated on speech samples from the open clinical **TORGO Benchmark** (Universi
 
 ### 3.1. Hybrid Execution for Real-World Hardware Inclusion
 Disabled individuals frequently rely on subsidized or older hardware unable to process heavy local neural networks. YapClean Care bridges this with 3 tiers:
-- **Tier 1 (Local Offline, $0):** Runs completely on-device under 500 MB RAM for capable computers.
-- **Tier 2 (BYOK, $0 Platform Fee):** Direct zero-markup connection to the user's personal API keys for budget PCs.
-- **Tier 3 (Subsidized Cloud):** A non-profit managed endpoint routing speech at cost for non-technical users on legacy machines.
+- **Tier 1 (Local Offline, €0):** Runs completely on-device under 500 MB RAM for capable computers without internet or keys.
+- **Tier 2 (BYOK, €0 Platform Fee):** Direct zero-markup connection to the user's personal API keys for budget PCs:
+  * *Google Gemini (AI Studio):* Free tier (15 RPM, 1,500 requests/day, €0/mo, no card required).
+  * *Groq Whisper:* Free tier (20 RPM, 2,000 requests/day or 7,200s audio/h, €0/mo, no card required).
+- **Tier 3 (Subsidized Cloud):** A privacy-first managed edge relay for vulnerable users (elderly, schools) funded via non-dilutive startup credits:
+  * *Instant Community Allowance:* 50 requests/day or 10,000 words out-of-the-box (no registration).
+  * *NGO & Clinic Vouchers (`YC-CARE-XXXX`):* Cryptographic HMAC-SHA256 offline voucher keys distributed via speech therapists and disability organizations for unmetered usage.
+  * *Zero Data Retention:* Ephemeral streaming in memory with zero audio storage (GDPR Article 9 compliant).
 
 ### 3.2. Active Keyboard Layout Live Auto-Translation
 In multilingual European societies, users frequently think and speak in their mother tongue (e.g., Bulgarian, Ukrainian, German) while working in an English or host-country interface. 

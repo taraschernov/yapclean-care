@@ -98,9 +98,25 @@ Google's *Project Euphonia* proved that 30 minutes of speaker personalization re
 
 ### 3.1. The 3-Tier Hardware-Inclusive Runtime
 Recognizing that many disabled citizens and educational institutions rely on older or budget hardware unable to run local models:
-* **Tier 1: 100% Local Offline ($0):** On capable modern PCs, quantized models run entirely on-device under 500 MB RAM without internet, keys, or accounts.
-* **Tier 2: BYOK ($0 Platform Fee):** On lower-spec machines, users can connect their own personal API keys (Groq, Google Gemini, Deepgram) directly without middleware or subscription markups.
-* **Tier 3: Subsidized At-Cost Cloud:** For non-technical users on legacy computers, an at-cost managed endpoint provides cloud inference, funded via startup cloud credits at cost with zero commercial markup.
+
+1. **Tier 1: 100% Local Offline (€0 / Forever):**
+   * **Target:** Modern PCs with AVX2-capable x86_64 CPUs or integrated/discrete GPUs.
+   * **Footprint:** Quantized acoustic models (`whisper.cpp`, `parakeet-tdt`) operating under 500 MB RAM. Zero internet connection, zero keys, 100% air-gapped privacy.
+
+2. **Tier 2: BYOK (Bring-Your-Own-Key, €0 Platform Fee):**
+   * **Target:** Low-spec laptops, thin clients, or legacy workstations.
+   * **Mechanism:** Direct zero-markup client-to-engine connection to public provider keys with zero platform fee:
+     * **Google Gemini (AI Studio):** Permanent **Free Tier** (€0 / $0, no credit card required). Explicit limits: **15 requests/min and 1,500 requests/day** (equivalent to ~4–6 hours of continuous speech/day, covering 100% of personal desktop dictation). Optional pay-as-you-go audio inference: ~$0.00002/sec (~$0.07/hour of audio).
+     * **Groq Cloud (Whisper-large-v3):** Permanent **Free Tier** (€0 / $0, no credit card required). Explicit limits: **20 requests/min, 2,000 requests/day**, or up to **7,200 audio seconds (2 hours) per hour**. Optional pay-as-you-go audio inference: **$0.003/min ($0.18/hour of speech)**.
+   * **Privacy:** Audio flows directly from client to upstream provider with zero intermediate proxy storage.
+
+3. **Tier 3: Subsidized At-Cost Cloud (Care Relay for High-Vulnerability Users):**
+   * **Target:** Elderly users, children in special education, and motor-impaired individuals unable to manage API key registrations.
+   * **Funding Source:** Backed by non-dilutive startup cloud credits (Google Cloud for Startups, Groq Developer Credits) and project hosting reserves; €0 cost to the end user.
+   * **Provisioning & Abuse Prevention Mechanism:**
+     * **Pathway A (Instant Community Allowance):** Out-of-the-box anonymous device token (UUID/ed25519) granting an initial baseline pool of 50 requests/day or 10,000 words. No registration, no email, zero barrier to entry.
+     * **Pathway B (Care Vouchers for NGOs & Clinics `YC-CARE-XXXX`):** Cryptographically signed HMAC-SHA256 offline voucher keys (`YC-CARE-`) distributed through partner speech therapy clinics, hospitals, and disability NGOs (e.g., European Disability Forum, Bulgarian Union of Disabled Persons). Vouchers unlock extended or unmetered yearly allowances on the community relay.
+     * **Pathway C (Zero-Retention Stateless Relay):** Hosted via a serverless edge gateway (Cloudflare Worker). Enforces per-device rate throttling, streams audio directly to STT backends in memory, and immediately discards audio buffers, guaranteeing zero biometric audio storage and full GDPR Article 9 compliance.
 
 ### 3.2. Key Technical Differentiators
 1. **Active Keyboard Layout Live Auto-Translation:** In multilingual European workplaces, users speak naturally in their mother tongue (e.g. Bulgarian, Ukrainian, German), and the system detects the foreground window's keyboard layout and inserts fluent, translated text directly into the application.
