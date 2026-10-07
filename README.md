@@ -2,10 +2,10 @@
 ### High-Fidelity Voice Input & Normalization for Atypical, Dysarthric, and Multilingual Speech
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-13%2F13%20Passing-success.svg)](tests/)
+[![Tests](https://img.shields.io/badge/Tests-16%2F16%20Passing-success.svg)](tests/)
 [![Atypical Speech Benchmark](https://img.shields.io/badge/TORGO%20Benchmark-WER%20Reduction%2071.8%25-brightgreen.svg)](docs/SCIENTIFIC_DOSSIER_NLNET.md)
-[![A11y Standard](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AA%20%7C%20EAA%202019%2F882-orange.svg)](docs/SCIENTIFIC_DOSSIER_NLNET.md)
-[![TRL](https://img.shields.io/badge/TRL-Level%207-blueviolet.svg)](docs/SCIENTIFIC_DOSSIER_NLNET.md)
+[![Multilingual Audio Benchmark](https://img.shields.io/badge/Audio%20Benchmark-25%20Cases%20%7C%205%20Languages-blue.svg)](docs/MULTILINGUAL_AUDIO_BENCHMARK_REPORT.md)
+[![Competitive Audit](https://img.shields.io/badge/Competitive%20Audit-Zero%20Dark%20Patterns-purple.svg)](docs/COMPETITIVE_ANALYSIS_AND_DIFFERENTIATION.md)
 
 ---
 
