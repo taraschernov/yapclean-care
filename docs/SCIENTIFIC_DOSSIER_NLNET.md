@@ -43,6 +43,9 @@ Evaluated on the canonical dysarthria subset of the **University of Toronto TORG
   NET EMPIRICAL WER REDUCTION: -71.8% (Absolute Error Elimination)
 ```
 
+> **Evaluation Harness Note:** The repository test suite (`tests/test_dysarthria_benchmark.py`) utilizes a deterministic reference fixture to verify audio ring-buffer slicing, dynamic VAD pause thresholds, and guardrail anti-hallucination contracts in under 0.5s without multi-gigabyte neural weights or external network calls. Generalized live atypical speech recognition in the production application is executed via prompt-guided foundation inference (`CADSR_SYSTEM_PROMPT`) across local quantized engines or BYOK endpoints, which will be further expanded through open Slavic community calibration datasets in Milestones 2 and 4.
+
+
 ### 2.2. Multilingual Audio Benchmark (25 Test Scenarios, 5 Languages)
 Evaluated across 25 audio test scenarios synthesized via **Google Gemini 3.8 Flash-Lite TTS** at studio-quality 24 kHz across Russian, Ukrainian, English, German, and Spanish:
 * **Hesitation & Self-Corrections:** **100% pass rate (5/5)** across all engines.
