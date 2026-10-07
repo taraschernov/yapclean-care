@@ -1,0 +1,13 @@
+# GitHub Sponsors & Open-Source Community Funding Configuration
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
+
+# GitHub Sponsors username
+github: [taraschernov]
+
+# Open Collective project name
+open_collective: yapclean-care
+
+# Custom sponsorship platforms (Polar.sh, Open Collective)
+custom:
+  - https://polar.sh/taraschernov
+  - https://opencollective.com/yapclean-care

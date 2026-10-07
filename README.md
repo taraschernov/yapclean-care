@@ -6,6 +6,9 @@
 [![Atypical Speech Benchmark](https://img.shields.io/badge/TORGO%20Benchmark-WER%20Reduction%2071.8%25-brightgreen.svg)](docs/SCIENTIFIC_DOSSIER_NLNET.md)
 [![Multilingual Audio Benchmark](https://img.shields.io/badge/Audio%20Benchmark-25%20Cases%20%7C%205%20Languages-blue.svg)](docs/MULTILINGUAL_AUDIO_BENCHMARK_REPORT.md)
 [![Competitive Audit](https://img.shields.io/badge/Competitive%20Audit-Zero%20Dark%20Patterns-purple.svg)](docs/COMPETITIVE_ANALYSIS_AND_DIFFERENTIATION.md)
+[![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?logo=github&style=flat)](https://github.com/sponsors/taraschernov)
+[![Open Collective](https://img.shields.io/badge/Open%20Collective-Donate-blue?logo=open-collective&style=flat)](https://opencollective.com/yapclean-care)
+[![Polar.sh](https://img.shields.io/badge/Polar.sh-Fund%20Bounties-0052FF?logo=polar&style=flat)](https://polar.sh/taraschernov)
 
 ---
 
@@ -136,8 +139,26 @@ tests/test_multi_profile_benchmark.py::test_benchmark_profile_suite PASSED
 
 ---
 
-## 6. Author & Maintainer
+## 6. Community Funding & Sustainability (Sponsorship)
+
+YapClean Care is an independent digital public good released under the Apache 2.0 license. To ensure sustainable open-source development, long-term maintenance, and infrastructure subsidies for vulnerable users, we welcome recurring and one-time sponsorships:
+
+| Platform | Best For | Details & Transparency |
+|---|---|---|
+| [**GitHub Sponsors**](https://github.com/sponsors/taraschernov) | Individuals & Developers | 0% transaction fees for individual contributions; recurring monthly or one-time micro-grants. |
+| [**Open Collective**](https://opencollective.com/yapclean-care) | Companies & Foundations | Transparent fiscal hosting with publicly auditable expenses, invoices, and corporate tax receipts. |
+| [**Polar.sh**](https://polar.sh/taraschernov) | Feature Bounties | Pledge bounties directly to specific issues, Linux Wayland drivers, or benchmark datasets. |
+
+### How Sponsorship Funds Are Allocated:
+1. **At-Cost Accessibility Subsidies:** Funding API allowances for quadriplegic and dysarthric users on legacy hardware who cannot run heavy on-device neural models.
+2. **Open Clinical Datasets:** Curating, annotating, and benchmarking atypical speech samples across underrepresented European languages.
+3. **Cross-Platform Drivers:** Building open virtual keyboard and Wayland/macOS accessibility integration.
+
+---
+
+## 7. Author & Maintainer
 
 * **Taras Chernov** (Sofia, Bulgaria, EU)
 * GitHub: [@taraschernov](https://github.com/taraschernov)
 * Email: `taras.chernov@gmail.com`
+
