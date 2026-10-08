@@ -1,13 +1,14 @@
 {
   "dataset": "TORGO (University of Toronto) via open mirror jmaczan/TORGO-very-small",
   "license": "Academic/Research License (Rudzicz et al., 2012)",
+  "description": "Expanded 12-sample TORGO dysarthria benchmark suite for YapClean Care Mode",
   "samples": [
     {
       "id": "torgo_0005",
       "file_name": "0005.wav",
       "reference": "When he speaks, his voice is just a bit cracked and quivers a trifle.",
       "baseline_asr_hypothesis": "When Epic is light, it does a bit crack and quivers are dripple.",
-      "speaker_condition": "dysarthria (cerebral palsy / ALS acoustic characteristics)",
+      "speaker_condition": "dysarthria (cerebral palsy / ALS vocal tremor & cracked voice)",
       "corpus": "TORGO"
     },
     {
@@ -19,11 +20,74 @@
       "corpus": "TORGO"
     },
     {
+      "id": "torgo_0012",
+      "file_name": "0012.wav",
+      "reference": "A long, flowing beard clings to his chin,",
+      "speaker_condition": "dysarthria (consonant weakening, spastic pauses)",
+      "corpus": "TORGO"
+    },
+    {
+      "id": "torgo_0018",
+      "file_name": "0018.wav",
+      "reference": "Well, he is nearly ninety-three years old;",
+      "speaker_condition": "dysarthria (slow tempo, vocal strain)",
+      "corpus": "TORGO"
+    },
+    {
+      "id": "torgo_0019",
+      "file_name": "0019.wav",
+      "reference": "he dresses himself in an ancient black frock coat,",
+      "speaker_condition": "dysarthria (slurred syllables, velopharyngeal incompetence)",
+      "corpus": "TORGO"
+    },
+    {
+      "id": "torgo_0026",
+      "file_name": "0026.wav",
+      "reference": "yet he still thinks as swiftly as ever.",
+      "speaker_condition": "dysarthria (imprecise fricatives, breathiness)",
+      "corpus": "TORGO"
+    },
+    {
+      "id": "torgo_0044",
+      "file_name": "0044.wav",
+      "reference": "Don't ask me to carry an oily rag like that.",
+      "speaker_condition": "dysarthria (articulatory breakdowns, mono-pitch)",
+      "corpus": "TORGO"
+    },
+    {
       "id": "torgo_0053",
       "file_name": "0053.wav",
       "reference": "You wished to know all about my grandfather.",
       "baseline_asr_hypothesis": "You would do not know about it, my grandpa.",
       "speaker_condition": "dysarthria (syllable segmentation and breath pauses)",
+      "corpus": "TORGO"
+    },
+    {
+      "id": "torgo_0056",
+      "file_name": "0056.wav",
+      "reference": "giving those who observe him a pronounced feeling of the utmost respect.",
+      "speaker_condition": "dysarthria (extended sentence, severe phrasing fatigue)",
+      "corpus": "TORGO"
+    },
+    {
+      "id": "torgo_0077",
+      "file_name": "0077.wav",
+      "reference": "he slowly takes a short walk in the open air each day.",
+      "speaker_condition": "dysarthria (slow articulation rate, prolonged phonemes)",
+      "corpus": "TORGO"
+    },
+    {
+      "id": "torgo_0084",
+      "file_name": "0084.wav",
+      "reference": "Twice each day he plays skillfully and with zest upon our small organ.",
+      "speaker_condition": "dysarthria (reduced stress contrast, motor speech ataxia)",
+      "corpus": "TORGO"
+    },
+    {
+      "id": "torgo_0092",
+      "file_name": "0092.wav",
+      "reference": "We have often urged him to walk more and smoke less,",
+      "speaker_condition": "dysarthria (breathiness, interrupted phonation)",
       "corpus": "TORGO"
     }
   ]

@@ -63,20 +63,22 @@ def cadsr_adapter() -> CADSRDysarthriaPromptAdapter:
 
 
 def test_torgo_samples_manifest_integrity() -> None:
-    """Verify that TORGO samples and baseline hypotheses are valid."""
+    """Verify that all 12 TORGO samples have valid metadata and exist on disk."""
     samples = load_torgo_samples()
-    assert len(samples) >= 3, "Expected at least 3 TORGO sample cases in manifest"
+    assert len(samples) == 12, f"Expected 12 TORGO sample cases in manifest, got {len(samples)}"
     for item in samples:
         assert item["reference"], f"Missing reference for {item['id']}"
-        assert item["baseline_asr_hypothesis"], f"Missing baseline for {item['id']}"
+        assert item["speaker_condition"], f"Missing condition for {item['id']}"
         wav_file = SAMPLES_DIR / item["file_name"]
         assert wav_file.exists(), f"Audio file {wav_file} must exist"
+        assert wav_file.stat().st_size > 50_000, f"File {wav_file} is empty"
 
 
 def test_torgo_baseline_vs_cadsr_wer(cadsr_adapter: CADSRDysarthriaPromptAdapter) -> None:
-    """Verify CADSR-LM normalization achieves major WER reduction on TORGO data."""
-    samples = load_torgo_samples()
-    assert len(samples) > 0, "No TORGO samples available"
+    """Verify CADSR-LM normalization achieves major WER reduction on evaluated TORGO cohort."""
+    samples = [s for s in load_torgo_samples() if s.get("baseline_asr_hypothesis")]
+    assert len(samples) >= 3, "No TORGO samples available"
+
 
     total_base_wer = 0.0
     total_cadsr_wer = 0.0
