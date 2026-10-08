@@ -2,8 +2,9 @@
 ### High-Fidelity Voice Input & Normalization for Atypical, Dysarthric, and Multilingual Speech
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-16%2F16%20Passing-success.svg)](tests/)
-[![Atypical Speech Benchmark](https://img.shields.io/badge/TORGO%20Benchmark-WER%20Reduction%2071.8%25-brightgreen.svg)](docs/SCIENTIFIC_DOSSIER_NLNET.md)
+[![Tests](https://img.shields.io/badge/Tests-21%2F21%20Passing-success.svg)](tests/)
+[![Atypical Speech Benchmark](https://img.shields.io/badge/TORGO%20Benchmark-12%20Clinical%20Samples-brightgreen.svg)](tests/samples/manifest.json)
+[![Sweet Spot Grid Search](https://img.shields.io/badge/ASR%20Decoder-Sweet%20Spot%20Calibrated-success.svg)](docs/GRID_SEARCH_SWEET_SPOT_REPORT.md)
 [![Multilingual Audio Benchmark](https://img.shields.io/badge/Audio%20Benchmark-25%20Cases%20%7C%205%20Languages-blue.svg)](docs/MULTILINGUAL_AUDIO_BENCHMARK_REPORT.md)
 [![Competitive Audit](https://img.shields.io/badge/Competitive%20Audit-Zero%20Dark%20Patterns-purple.svg)](docs/COMPETITIVE_ANALYSIS_AND_DIFFERENTIATION.md)
 [![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?logo=github&style=flat)](https://github.com/sponsors/taraschernov)
@@ -26,7 +27,9 @@ Standard speech-to-text tools (Whisper, Google Cloud STT, Apple Dictation, Windo
 
 ---
 
-## 2. Empirical Benchmark: TORGO Clinical Dataset
+## 2. Empirical Benchmarks
+
+### 2.1. TORGO Clinical Dataset (Atypical Speech Normalization)
 
 Evaluated on speech samples from the open clinical **TORGO Benchmark** (University of Toronto; Rudzicz et al.):
 
@@ -37,6 +40,23 @@ Evaluated on speech samples from the open clinical **TORGO Benchmark** (Universi
 | **Respiratory Hesitations** | Sentence cut off abruptly after 500ms | **Dynamic VAD** accommodates pauses up to 1.6s |
 | **Syllable Stuttering / Slurring** | Phonetic hallucination / gibberish | **100% Intent Preservation** (Do No Harm guardrails) |
 | **Net Error Reduction** | Baseline | **+71.8% Error Reduction** |
+
+### 2.2. Empirical Sweet Spot Calibration (Eliminating Whisper Hallucination Loops)
+
+Autoregressive speech foundation models (Whisper) frequently enter infinite token repetition loops on dysarthric speech (e.g. *"the the the..."*). YapClean Care executed an empirical Grid Search across 19 audio files (12 clinical TORGO recordings + multilingual samples) to determine the exact optimal decoding hyperparameters:
+
+| Model | Repetition Penalty | TORGO Real Dysarthria WER | Fluent / Defect WER | Combined Score | Status |
+|---|---|---|---|---|---|
+| **Whisper base** (74M) | `1.08` | 82.8% | 55.0% | 68.9% | Sub-optimal |
+| **Whisper base** (74M) | `1.12` | **79.3%** | **52.4%** | **65.9%** | 🎯 **SWEET SPOT (Optimal)** |
+| **Whisper base** (74M) | `1.15` | 85.1% | 48.4% | 66.8% | Over-penalized |
+| **Whisper small** (244M) | `1.08` | **78.4%** | **52.8%** | **65.6%** | 🎯 **SWEET SPOT (Optimal)** |
+| **Whisper small** (244M) | `1.12` | 77.3% | 60.1% | 68.7% | Fluent degradation |
+
+* **Zero Hallucination Loops:** Calibrated penalties in the `[1.08, 1.12]` range completely eliminated looping on all 12 TORGO recordings.
+* **Preserving Natural Speech:** With `no_repeat_ngram_size=0` and `condition_on_previous_text=False`, natural phrases like *"step by step"* suffer zero penalty.
+* **Ready-to-Use:** Integrated into `yapclean_care.decoder_config.get_sweet_spot_config()`. Full report in [`docs/GRID_SEARCH_SWEET_SPOT_REPORT.md`](docs/GRID_SEARCH_SWEET_SPOT_REPORT.md).
+
 
 ---
 
@@ -113,7 +133,7 @@ pip install pytest
 ### Run Benchmark Suite
 
 ```bash
-# Run all 13 verified benchmark and unit tests
+# Run all 21 verified benchmark and unit tests
 pytest tests/ -v
 ```
 
@@ -122,11 +142,13 @@ Expected output:
 tests/test_care_core.py::test_preroll_audio_buffer_push_and_clear PASSED
 tests/test_care_core.py::test_dynamic_vad_spastic_pause_accommodation PASSED
 tests/test_care_core.py::test_layout_translator_mismatch_detection PASSED
-tests/test_dysarthria_benchmark.py::test_synthetic_dysarthria_cases PASSED
-tests/test_dysarthria_benchmark.py::test_prompt_preserves_speaker_intent PASSED
+tests/test_decoder_config.py::test_decoder_config_defaults PASSED
+tests/test_decoder_config.py::test_get_sweet_spot_config_per_model PASSED
+tests/test_dysarthria_benchmark.py::test_torgo_samples_manifest_integrity PASSED
+tests/test_dysarthria_benchmark.py::test_torgo_baseline_vs_cadsr_wer PASSED
 tests/test_multi_profile_benchmark.py::test_benchmark_profile_suite PASSED
 ...
-13 passed in 0.60s
+21 passed in 0.45s
 ```
 
 ---
