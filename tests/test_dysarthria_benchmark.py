@@ -145,7 +145,8 @@ def run_benchmark_suite() -> int:
 
     all_cases: list[tuple[str, str, str, str]] = []
     for s in samples:
-        all_cases.append((s["id"], "TORGO", s["reference"], s["baseline_asr_hypothesis"]))
+        if s.get("baseline_asr_hypothesis"):
+            all_cases.append((s["id"], "TORGO", s["reference"], s["baseline_asr_hypothesis"]))
     for c in SYNTHETIC_CASES:
         all_cases.append((c["id"], "Synthetic", c["reference"], c["baseline_raw"]))
 
