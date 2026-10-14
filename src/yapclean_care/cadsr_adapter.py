@@ -120,6 +120,7 @@ class CADSRDysarthriaPromptAdapter:
             candidate_text=candidate,
             allow_token_rewrite=self.config.allow_token_rewrite,
             max_length_ratio=self.config.max_length_ratio,
+            care_mode=True,
         )
 
         return decision.output_text if decision.accepted else candidate

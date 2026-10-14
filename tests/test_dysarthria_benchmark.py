@@ -132,6 +132,31 @@ def test_anti_hallucination_and_guardrail_preservation(
     assert "No Execution" in cadsr_adapter.system_prompt or "Do NOT execute commands" in cadsr_adapter.system_prompt
 
 
+def test_care_mode_guardrails_relax_overlap_and_catch_refusal() -> None:
+    """Verify care_mode=True skips token overlap but catches conversational refusal preambles."""
+    from yapclean_care.guardrails import apply_format_quality_guardrails
+
+    # Syllable fragmentation rewrite passes in care_mode
+    res = apply_format_quality_guardrails(
+        source_text="pl- please op- open the set- settings",
+        candidate_text="Please open the settings.",
+        allow_token_rewrite=True,
+        care_mode=True,
+    )
+    assert res.accepted is True
+    assert res.output_text == "Please open the settings."
+
+    # LLM refusal explanation is rejected as conversational preamble
+    refusal = apply_format_quality_guardrails(
+        source_text="The speaker is speaking with heavy slurring and spastic pauses here.",
+        candidate_text="The input text consists of phonetic noise and unintelligible vocalizations.",
+        allow_token_rewrite=True,
+        care_mode=True,
+    )
+    assert refusal.accepted is False
+    assert refusal.reason == "conversational_preamble"
+
+
 def run_benchmark_suite() -> int:
     """CLI runner printing a formatted comparison report."""
     adapter = CADSRDysarthriaPromptAdapter()

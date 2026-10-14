@@ -51,6 +51,7 @@ def apply_format_quality_guardrails(
     min_token_count_for_overlap: int = 6,
     min_token_overlap: float = 0.35,
     allow_token_rewrite: bool = False,
+    care_mode: bool = False,
 ) -> GuardrailDecision:
     """Validate formatting output against hallucination/over-rewrite patterns.
 
@@ -111,16 +112,19 @@ def apply_format_quality_guardrails(
                 output_text=source,
                 reason="conversational_preamble",
             )
-        source_tokens = _tokenize(source)
-        candidate_tokens = _tokenize(candidate)
-        if len(source_tokens) >= 4:
-            overlap = _token_overlap_ratio(source_tokens, candidate_tokens)
-            if overlap < 0.25:
-                return GuardrailDecision(
-                    accepted=False,
-                    output_text=source,
-                    reason="insufficient_token_overlap",
-                )
+        # In care_mode, word-level token overlap is bypassed because dysarthric speech
+        # exhibits heavy phonetic/syllable fragmentation that legitimate reconstruction must repair.
+        if not care_mode:
+            source_tokens = _tokenize(source)
+            candidate_tokens = _tokenize(candidate)
+            if len(source_tokens) >= 4:
+                overlap = _token_overlap_ratio(source_tokens, candidate_tokens)
+                if overlap < 0.25:
+                    return GuardrailDecision(
+                        accepted=False,
+                        output_text=source,
+                        reason="insufficient_token_overlap",
+                    )
 
     return GuardrailDecision(accepted=True, output_text=candidate)
 
@@ -234,7 +238,8 @@ def _has_token_diff_mismatch(source: str, candidate: str) -> bool:
 
 
 _CONVERSATIONAL_PREAMBLE_RE = re.compile(
-    r"^(?:here is|here's|sure,|certainly,|i have cleaned|cleaned (?:version|transcript):|вот (?:ваш|исправленный|текст)|конечно,|перевод:|результат:)\b",
+    r"^(?:here is|here's|sure,|certainly,|i have cleaned|cleaned (?:version|transcript):|вот (?:ваш|исправленный|текст)|конечно,|перевод:|результат:|"
+    r"the input text consists of|unintelligible|phonetic noise|cannot transcribe|no recognizable speech)\b",
     re.IGNORECASE,
 )
 
