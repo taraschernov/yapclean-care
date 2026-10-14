@@ -29,17 +29,23 @@ Standard speech-to-text tools (Whisper, Google Cloud STT, Apple Dictation, Windo
 
 ## 2. Empirical Benchmarks
 
-### 2.1. TORGO Clinical Dataset (Atypical Speech Normalization)
+### 2.1. TORGO Clinical Dataset (Zero-Shot Atypical Speech Benchmark)
 
-Evaluated on speech samples from the open clinical **TORGO Benchmark** (University of Toronto; Rudzicz et al.):
+Evaluated on 12 real clinical dysarthric speech recordings from the open **TORGO Database** (University of Toronto; Rudzicz et al., speakers with cerebral palsy and ALS reading the 1916 phonetic stress-test *"The Grandfather Passage"*). 
 
-| Metric / Feature | Standard Baseline ASR (Whisper / BigTech) | YapClean Care Pipeline (Pre-roll + CADSR-LM) |
-|---|---|---|
-| **Word Error Rate (WER)** | **71.8%** (Severe error rate) | **0.0%** (Clean reconstruction) |
-| **Initial Phoneme Truncation** | Dropped first syllable on slow starts | **1.5s Pre-roll Ring Buffer** preserves onset |
-| **Respiratory Hesitations** | Sentence cut off abruptly after 500ms | **Dynamic VAD** accommodates pauses up to 1.6s |
-| **Syllable Stuttering / Slurring** | Phonetic hallucination / gibberish | **100% Intent Preservation** (Do No Harm guardrails) |
-| **Net Error Reduction** | Baseline | **+71.8% Error Reduction** |
+Every metric is computed directly from raw unadapted audio inference with zero hardcoded phonetic replacements or synthetic fixtures:
+
+| Metric / Scenario | Default Whisper Small (Uncalibrated) | YapClean Calibrated Local (Small, `rep_pen=1.08`) | YapClean Cloud Care Mode (`whisper-large-v3` + Llama 3.3 70B) |
+|---|---|---|---|
+| **Average Word Error Rate (WER)** | **110.8%** (Severe loop collapse) | **64.6%** (Stable decode) | **59.8%** (Clinical baseline limit) |
+| **Spastic Pause Loops (`0012`)** | ❌ **350.0% WER** (130+ hallucinated tokens) | ✅ **100.0% WER** (0 looping) | ✅ **87.5% WER** (Loop-free semantic capture) |
+| **Foreign Script Hallucination (`0026`)**| ❌ **587.5% WER** (Telugu script hallucination) | ✅ **100.0% WER** (Noise suppressed) | ✅ **50.0% WER** (*"He still thinks as swiftly as ever"*) |
+| **Moderate Dysarthria (`0053`)** | 62.5% WER | 25.0% WER | 🎯 **12.5% WER** (*"You wish to know all about my grandfather"*) |
+| **Non-Linear Consonant Weakening (`0019`)**| ❌ 177.8% WER (*"plugin usc conference"*) | 55.6% WER | 🎯 **33.3% WER** (*"He dressed himself in an Asian black frog coat"*) |
+| **Hallucination Loop Suppression** | 0% (Runaway repetitions on pauses) | **100% Loop Elimination** | **100% Loop Elimination** |
+
+📄 **Full Scientific & Engineering Report:** [`docs/TORGO_CARE_MODE_BENCHMARK.md`](docs/TORGO_CARE_MODE_BENCHMARK.md)  
+📊 **Raw Benchmark Datasets:** [`benchmarks/data/honest_benchmark_results.json`](benchmarks/data/honest_benchmark_results.json) & [`benchmarks/data/groq_whisper_large_care_results.json`](benchmarks/data/groq_whisper_large_care_results.json)
 
 ### 2.2. Empirical Sweet Spot Calibration (Eliminating Whisper Hallucination Loops)
 

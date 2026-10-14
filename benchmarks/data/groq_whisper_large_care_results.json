@@ -1,0 +1,218 @@
+[
+  {
+    "id": "torgo_0005",
+    "file": "0005.wav",
+    "condition": "dysarthria (cerebral palsy / ALS vocal tremor & cracked voice)",
+    "reference": "When he speaks, his voice is just a bit cracked and quivers a trifle.",
+    "groq_stt_raw": "When he peeked in the void, he died a big crack and the cleavers had dripped off.",
+    "groq_care_cleaned": "When he peeked into the void, he made a big crack and the cleavers slipped off.",
+    "wer_stt": 92.86,
+    "wer_cleaned": 85.71,
+    "cer_stt": 64.8,
+    "cer_cleaned": 66.7,
+    "diagnostics": {
+      "formatter_outcome": "llm",
+      "formatter_reason": "accepted"
+    },
+    "latency_stt_ms": 514.9,
+    "latency_llm_ms": 3979.3
+  },
+  {
+    "id": "torgo_0011",
+    "file": "0011.wav",
+    "condition": "dysarthria (prolonged vowels and articulatory imprecision)",
+    "reference": "Except in the winter when the ooze or snow or ice prevents,",
+    "groq_stt_raw": "A glamp in the winter when the wool are not alright for paint.",
+    "groq_care_cleaned": "A slump in the winter when the walls are not alright for paint.",
+    "wer_stt": 66.67,
+    "wer_cleaned": 66.67,
+    "cer_stt": 48.9,
+    "cer_cleaned": 53.2,
+    "diagnostics": {
+      "formatter_outcome": "llm",
+      "formatter_reason": "accepted"
+    },
+    "latency_stt_ms": 833.7,
+    "latency_llm_ms": 2162.3
+  },
+  {
+    "id": "torgo_0012",
+    "file": "0012.wav",
+    "condition": "dysarthria (consonant weakening, spastic pauses)",
+    "reference": "A long, flowing beard clings to his chin,",
+    "groq_stt_raw": "along flying bird cranes to inside ship.",
+    "groq_care_cleaned": "Along flying bird cranes to inside ship.",
+    "wer_stt": 87.5,
+    "wer_cleaned": 87.5,
+    "cer_stt": 43.8,
+    "cer_cleaned": 43.8,
+    "diagnostics": {
+      "formatter_outcome": "llm",
+      "formatter_reason": "accepted"
+    },
+    "latency_stt_ms": 463.2,
+    "latency_llm_ms": 1065.8
+  },
+  {
+    "id": "torgo_0018",
+    "file": "0018.wav",
+    "condition": "dysarthria (slow tempo, vocal strain)",
+    "reference": "Well, he is nearly ninety-three years old;",
+    "groq_stt_raw": "Well, it is nearly 90 years old.",
+    "groq_care_cleaned": "Well, it is nearly 90 years old.",
+    "wer_stt": 37.5,
+    "wer_cleaned": 37.5,
+    "cer_stt": 39.4,
+    "cer_cleaned": 39.4,
+    "diagnostics": {
+      "formatter_outcome": "fallback",
+      "formatter_reason": "provider_error"
+    },
+    "latency_stt_ms": 452.3,
+    "latency_llm_ms": 333.3
+  },
+  {
+    "id": "torgo_0019",
+    "file": "0019.wav",
+    "condition": "dysarthria (slurred syllables, velopharyngeal incompetence)",
+    "reference": "he dresses himself in an ancient black frock coat,",
+    "groq_stt_raw": "He dressed himself in an Asian black frog coat.",
+    "groq_care_cleaned": "He dressed himself in an Asian black frog coat.",
+    "wer_stt": 33.33,
+    "wer_cleaned": 33.33,
+    "cer_stt": 17.1,
+    "cer_cleaned": 17.1,
+    "diagnostics": {
+      "formatter_outcome": "fallback",
+      "formatter_reason": "provider_error"
+    },
+    "latency_stt_ms": 516.6,
+    "latency_llm_ms": 270.9
+  },
+  {
+    "id": "torgo_0026",
+    "file": "0026.wav",
+    "condition": "dysarthria (imprecise fricatives, breathiness)",
+    "reference": "yet he still thinks as swiftly as ever.",
+    "groq_stt_raw": "Yet in the ranks as sleepy as ever.",
+    "groq_care_cleaned": "Yet in the ranks as sleepy as ever.",
+    "wer_stt": 50.0,
+    "wer_cleaned": 50.0,
+    "cer_stt": 45.2,
+    "cer_cleaned": 45.2,
+    "diagnostics": {
+      "formatter_outcome": "fallback",
+      "formatter_reason": "provider_error"
+    },
+    "latency_stt_ms": 551.0,
+    "latency_llm_ms": 267.1
+  },
+  {
+    "id": "torgo_0044",
+    "file": "0044.wav",
+    "condition": "dysarthria (articulatory breakdowns, mono-pitch)",
+    "reference": "Don't ask me to carry an oily rag like that.",
+    "groq_stt_raw": "Don't make me look at you in the eye like that.",
+    "groq_care_cleaned": "Don't make me look at you in the eye like that.",
+    "wer_stt": 70.0,
+    "wer_cleaned": 70.0,
+    "cer_stt": 52.9,
+    "cer_cleaned": 52.9,
+    "diagnostics": {
+      "formatter_outcome": "fallback",
+      "formatter_reason": "provider_error"
+    },
+    "latency_stt_ms": 515.4,
+    "latency_llm_ms": 266.8
+  },
+  {
+    "id": "torgo_0053",
+    "file": "0053.wav",
+    "condition": "dysarthria (syllable segmentation and breath pauses)",
+    "reference": "You wished to know all about my grandfather.",
+    "groq_stt_raw": "You wish to know all about my grandfather.",
+    "groq_care_cleaned": "You wish to know all about my grandfather.",
+    "wer_stt": 12.5,
+    "wer_cleaned": 12.5,
+    "cer_stt": 5.6,
+    "cer_cleaned": 5.6,
+    "diagnostics": {
+      "formatter_outcome": "llm",
+      "formatter_reason": "accepted"
+    },
+    "latency_stt_ms": 624.5,
+    "latency_llm_ms": 539.0
+  },
+  {
+    "id": "torgo_0056",
+    "file": "0056.wav",
+    "condition": "dysarthria (extended sentence, severe phrasing fatigue)",
+    "reference": "giving those who observe him a pronounced feeling of the utmost respect.",
+    "groq_stt_raw": "Giving knowledge to a mere human born out of the building has been the utmost respect.",
+    "groq_care_cleaned": "Giving knowledge to a mere human born out of the building has been the utmost respect.",
+    "wer_stt": 91.67,
+    "wer_cleaned": 91.67,
+    "cer_stt": 51.7,
+    "cer_cleaned": 51.7,
+    "diagnostics": {
+      "formatter_outcome": "fallback",
+      "formatter_reason": "provider_error"
+    },
+    "latency_stt_ms": 435.0,
+    "latency_llm_ms": 301.7
+  },
+  {
+    "id": "torgo_0077",
+    "file": "0077.wav",
+    "condition": "dysarthria (slow articulation rate, prolonged phonemes)",
+    "reference": "he slowly takes a short walk in the open air each day.",
+    "groq_stt_raw": "I will make a large watch in the open every day.",
+    "groq_care_cleaned": "I will make a large watch in the open every day.",
+    "wer_stt": 58.33,
+    "wer_cleaned": 58.33,
+    "cer_stt": 52.4,
+    "cer_cleaned": 52.4,
+    "diagnostics": {
+      "formatter_outcome": "fallback",
+      "formatter_reason": "provider_error"
+    },
+    "latency_stt_ms": 1077.6,
+    "latency_llm_ms": 286.0
+  },
+  {
+    "id": "torgo_0084",
+    "file": "0084.wav",
+    "condition": "dysarthria (reduced stress contrast, motor speech ataxia)",
+    "reference": "Twice each day he plays skillfully and with zest upon our small organ.",
+    "groq_stt_raw": "It's right in the embrace carefully we and we rest upon our small organs.",
+    "groq_care_cleaned": "It's right in the embrace carefully we and we rest upon our small organs.",
+    "wer_stt": 76.92,
+    "wer_cleaned": 76.92,
+    "cer_stt": 52.6,
+    "cer_cleaned": 52.6,
+    "diagnostics": {
+      "formatter_outcome": "fallback",
+      "formatter_reason": "provider_error"
+    },
+    "latency_stt_ms": 739.1,
+    "latency_llm_ms": 287.6
+  },
+  {
+    "id": "torgo_0092",
+    "file": "0092.wav",
+    "condition": "dysarthria (breathiness, interrupted phonation)",
+    "reference": "We have often urged him to walk more and smoke less,",
+    "groq_stt_raw": "We have obviously heard him talk more and more.",
+    "groq_care_cleaned": "We have obviously heard him talk more and more.",
+    "wer_stt": 54.55,
+    "wer_cleaned": 54.55,
+    "cer_stt": 43.9,
+    "cer_cleaned": 43.9,
+    "diagnostics": {
+      "formatter_outcome": "fallback",
+      "formatter_reason": "provider_error"
+    },
+    "latency_stt_ms": 596.1,
+    "latency_llm_ms": 265.9
+  }
+]
