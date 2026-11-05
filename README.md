@@ -17,7 +17,7 @@
 > measurements, not a finished assistive product. An audit of our own earlier text found claims that
 > are wrong or unproven (an invented "71.8% -> 0.0% WER" result, whisper.cpp/Linux/macOS/HID
 > support that does not exist, no screen-reader testing). The full list, what is real, what is
-> not solved and what funding would be for: [docs/STATUS.md](docs/STATUS.md).
+> not solved and what comes next: [docs/STATUS.md](docs/STATUS.md).
 > The story of how the error happened and was found, with the real picture:
 > [docs/INVESTIGATION_2026-11-04.md](docs/INVESTIGATION_2026-11-04.md).
 > Care mode itself runs in the proprietary YapClean Windows app; the numbers below come from it.
