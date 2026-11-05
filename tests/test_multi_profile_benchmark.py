@@ -1,14 +1,9 @@
-"""Multi-Profile Atypical Speech Benchmark Suite for YapClean.
+"""Multi-profile unit checks for the rule-based cleanup helper (hand-written strings).
 
-Compares Baseline ASR vs Standard Prompt vs Adaptive Assistive Filter (CADSR-LM) across:
-- Profile A: Heavy Dysarthria / CP / ALS (TORGO dataset + acoustic drift)
-- Profile B: Stuttering & Cluttering (prolongations, sound repetitions, blocks)
-- Profile C: Breath Pauses / Spasms (intra-sentence gaps > 1.2s)
-- Profile D: Control Group (Typical Fluent Speech - business emails, casual chat)
-
-Demonstrates that while Assistive Filter provides massive gains on atypical speech,
-it degrades fluent speech via over-correction and truncation, establishing the necessity
-for an explicit UI toggle (Care Mode).
+These are not recognition benchmarks: the inputs are illustrations, not recognizer output.
+Phoneme slips (profile A) are covered in test_dysarthria_benchmark.py, which asserts the rules
+do NOT repair them. The assistive rules fix repeated syllables and pause fragments (B, C) and
+over-correct fluent speech (D: 'so-so' -> 'so'), which is why Care Mode is an explicit toggle.
 """
 
 from __future__ import annotations
@@ -43,41 +38,6 @@ def cadsr_adapter() -> CADSRDysarthriaPromptAdapter:
 @pytest.fixture
 def standard_filter() -> StandardPromptFilter:
     return StandardPromptFilter()
-
-
-def test_profile_a_heavy_dysarthria(
-    cadsr_adapter: CADSRDysarthriaPromptAdapter,
-    standard_filter: StandardPromptFilter,
-) -> None:
-    """Verify CADSR recovers heavy dysarthric speech where standard filter fails."""
-    samples = [s for s in BENCHMARK_PROFILES if s.profile == "A"]
-    assert len(samples) >= 4
-
-    total_base_wer = 0.0
-    total_std_wer = 0.0
-    total_assist_wer = 0.0
-
-    for sample in samples:
-        base_res = compute_wer(sample.reference, sample.baseline_raw)
-        std_res = compute_wer(sample.reference, standard_filter.normalize(sample.baseline_raw))
-        assist_res = compute_wer(sample.reference, cadsr_adapter.normalize(sample.baseline_raw))
-
-        total_base_wer += base_res.wer
-        total_std_wer += std_res.wer
-        total_assist_wer += assist_res.wer
-
-        # Baseline ASR and Standard Prompt suffer severe WER (>50%) on dysarthria
-        assert base_res.wer >= 0.50, f"Expected high baseline WER for {sample.id}"
-        assert std_res.wer >= 0.50, f"Standard prompt cannot fix phoneme slips in {sample.id}"
-        # Assistive filter recovers intended utterance
-        assert assist_res.wer <= 0.05, f"Assistive filter should achieve near-zero WER for {sample.id}"
-
-    avg_base = total_base_wer / len(samples)
-    avg_std = total_std_wer / len(samples)
-    avg_assist = total_assist_wer / len(samples)
-
-    # Net improvement of Assistive over Standard > 60 percentage points
-    assert (avg_std - avg_assist) >= 0.60
 
 
 def test_profile_b_stuttering_and_cluttering(
@@ -203,14 +163,14 @@ def run_multi_profile_benchmark_cli() -> int:
     """Print multi-profile benchmark matrix in a formatted table."""
     summary = compute_benchmark_matrix()
     names = {
-        "A": "Profile A (Heavy Dysarthria / ALS)",
+        "A": "Profile A (Phoneme slips)",
         "B": "Profile B (Stuttering & Cluttering)",
         "C": "Profile C (Breath Pauses / Spasms)",
         "D": "Profile D (Control / Fluent Speech)",
     }
 
     print("\n" + "=" * 88)
-    print("  YAPCLEAN MULTI-PROFILE SPEECH BENCHMARK MATRIX (4 PROFILES x 3 PIPELINES)")
+    print("  RULE-BASED CLEANUP CHECK ON HAND-WRITTEN STRINGS (NOT A RECOGNITION BENCHMARK)")
     print("=" * 88)
     print(f"{'Profile Cohort':<38} | {'Base ASR':<10} | {'Std Prompt':<10} | {'Assistive':<10} | {'Delta':<10}")
     print("-" * 88)
@@ -224,9 +184,9 @@ def run_multi_profile_benchmark_cli() -> int:
         )
 
     print("=" * 88)
-    print("  CRITICAL FINDING: Assistive filter achieves massive gains on Profiles A/B/C (+46% to +79%),")
-    print("  BUT regresses Profile D by -8.0% (over-corrects 'so-so', 'bye-bye', and truncates 'no, no, no').")
-    print("  RECOMMENDATION: Require explicit opt-in toggle 'YapClean Care Mode' in SettingsPage.tsx.\n")
+    print("  The rules fix repeated syllables and pause fragments (profiles B/C) and leave phoneme")
+    print("  slips (profile A) untouched. They over-correct fluent speech (profile D), so Care Mode")
+    print("  stays an explicit opt-in toggle. Inputs are hand-written: nothing about real speech.\n")
     return 0
 
 

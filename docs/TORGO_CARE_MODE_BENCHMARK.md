@@ -9,6 +9,49 @@
 
 ---
 
+## Independent re-run and correction (2026-10-29)
+
+The tables below were re-checked end to end on real audio: each of the 12 WAV
+files was sent to production `whisper-large-v3` (Groq), the raw transcript was
+then passed through the current Care cleanup (`care_mode=True`, gpt-oss-120b
+behind the same guardrails), and WER was computed with a separate, minimal
+word-level Levenshtein implementation (lower-cased, punctuation stripped).
+
+| Sample | Raw whisper-large-v3 | After Care cleanup | Deepgram nova-3 | Gemini audio |
+|---|---|---|---|---|
+| torgo_0005 | 92.9% | 85.7% | 64% | 86% |
+| torgo_0011 | 66.7% | 66.7% | 67% | 50% |
+| torgo_0012 | 87.5% | 87.5% | 88% | 88% |
+| torgo_0018 | 37.5% | 50.0% | 25% | 38% |
+| torgo_0019 | 33.3% | 33.3% | 33% | 89% |
+| torgo_0026 | 50.0% | 50.0% | 38% | 88% |
+| torgo_0044 | 70.0% | 70.0% | 90% | 50% |
+| torgo_0053 | 12.5% | 12.5% | 25% | 50% |
+| torgo_0056 | 91.7% | 91.7% | 100% | 92% |
+| torgo_0077 | 58.3% | 58.3% | 58% | 67% |
+| torgo_0084 | 76.9% | 76.9% | 92% | 62% |
+| torgo_0092 | 54.5% | 54.5% | 82% | 91% |
+| **Average** | **61.0%** | **61.4%** | **63.5%** | **70.7%** |
+
+What this means:
+
+- The "Cloud Care Mode" column above is reproducible, but it is essentially the
+  output of `whisper-large-v3`. The improvement over the uncalibrated
+  `whisper-small` baseline comes from the stronger recognition model and from
+  the guardrails (loop suppression, foreign-script rejection), not from the LLM
+  cleanup.
+- The LLM cleanup is deliberately conservative in Care mode: it does not invent
+  words it cannot hear. That keeps output safe, but it cannot recover words the
+  recogniser got wrong, so it does not reduce WER on dysarthric speech.
+- Picking the best of the three engines per sample would reach about 52% WER,
+  which shows the ceiling of engine switching without speaker adaptation.
+- Twelve samples from one reading passage are too few for strong claims. The
+  realistic path to large gains is speaker-specific adaptation (personal
+  vocabulary and fine-tuning on a user's own recordings); that work has not
+  been done yet.
+
+---
+
 ## 1. Executive Summary & Scientific Integrity Statement
 
 Motor speech impairments—arising from conditions such as cerebral palsy, amyotrophic lateral sclerosis (ALS), Parkinson's disease, and post-stroke dysarthria—present severe acoustic challenges for modern automatic speech recognition (ASR). Speakers frequently exhibit vocal tremor, prolonged phonemes, consonant weakening, breath spasticity, and unexpected disfluencies. Standard autoregressive speech models (such as OpenAI Whisper) frequently break down under these conditions, falling into infinite hallucination loops, substituting unrelated training-set memorizations, or truncating audio abruptly.

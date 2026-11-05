@@ -19,7 +19,6 @@ keywords = [
     "dysarthria",
     "stuttering",
     "vad",
-    "nlnet",
     "open-source"
 ]
 classifiers = [

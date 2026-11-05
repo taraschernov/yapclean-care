@@ -1,6 +1,11 @@
-"""CADSR-LM inspired prompt adapter for atypical and dysarthric speech reconstruction.
+"""Prompt adapter and rule-based cleanup helper for atypical-speech experiments.
 
-Based on Continuous Automatic Dysarthric Speech Recognition (CADSR) principles:
+"CADSR-LM" is an in-house name for the prompt below plus the generic rules; it is not a
+published method or trained model. The rules only handle repeated syllables, pause
+fragments and punctuation. They contain no answer tables: phoneme slips can only be
+repaired by a model, never by this helper.
+
+The prompt follows these principles:
 1. Reconstructing fragmented syllables and prolonged phonemes.
 2. Correcting acoustic and articulatory distortions (slurred consonants, vowel drift).
 3. Enforcing strict anti-hallucination guardrails (no semantic invention).
@@ -34,8 +39,8 @@ Their speech recognition output contains acoustic distortions, interrupted sylla
    - Eliminate involuntary phonetic repetitions caused by articulatory tremors.
 
 2. Articulatory & Phonetic Slip Correction:
-   - Correct phonetic misrecognitions typical of dysarthria (e.g., "quivers are dripple" -> "quivers a trifle", "window and not our age perpents" -> "winter when the ooze or snow or ice prevents").
-   - Restore weakened consonants and normalized prolonged vowels (e.g., "payshent" -> "patient", "slowleh" -> "slowly").
+   - Correct phonetic misrecognitions typical of dysarthria (e.g., "dis is a gud ideah" -> "this is a good idea").
+   - Restore weakened consonants and normalized prolonged vowels (e.g., "kompooter" -> "computer", "hapily" -> "happily").
 
 3. Strict Anti-Hallucination Guardrail (CRITICAL):
    - Never invent new facts, explanations, narrative content, or unsolicited completions.
@@ -147,24 +152,7 @@ class CADSRDysarthriaPromptAdapter:
         # 4. Collapse perceived articulatory tremor repetitions (e.g. 'no, no, no' -> 'no')
         reconstructed = re.sub(r"\b([a-zA-Z]+)(?:,\s*\1\b)+", r"\1", reconstructed, flags=re.IGNORECASE)
 
-        # 5. Known dysarthric acoustic corrections (TORGO Grandfather passage & test cases)
-        phonetic_mappings = [
-            (r"\bwhen epic is light\b", "when he speaks his voice"),
-            (r"\bit does a bit crack\b", "is just a bit cracked"),
-            (r"\bquivers are dripple\b", "quivers a trifle"),
-            (r"\bagain\s*,\s*in the winter window\b", "except in the winter when the"),
-            (r"\band not our age perpents\b", "ooze or snow or ice prevents"),
-            (r"\byou would do not know about it\b", "you wished to know all about"),
-            (r"\bmy grandpa\b", "my grandfather"),
-            (r"\bde payshent wahked slowleh een de gahden\b", "the patient walked slowly in the garden"),
-            (r"\bdoc- \.\.\. doctor uh-pointment\b", "doctor appointment"),
-            (r"\buh-pointment\b", "appointment"),
-        ]
-
-        for pattern, replacement in phonetic_mappings:
-            reconstructed = re.sub(pattern, replacement, reconstructed, flags=re.IGNORECASE)
-
-        # 6. Cleanup trailing / repeated punctuation and whitespace
+        # 5. Cleanup trailing / repeated punctuation and whitespace
         reconstructed = re.sub(r"\s+", " ", reconstructed).strip()
         reconstructed = re.sub(r"\s+([,.;:!?])", r"\1", reconstructed)
 

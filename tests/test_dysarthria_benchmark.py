@@ -1,7 +1,13 @@
-"""Atypical Speech (Dysarthria) Benchmark Runner for YapClean.
+"""Unit checks for the rule-based cleanup helper used by the atypical-speech tests.
 
-Measures baseline ASR Word Error Rate (WER) versus CADSR-LM prompt-enhanced normalization
-using open TORGO acoustic dataset samples and synthetic dysarthric test cases.
+IMPORTANT - what this file is NOT: it is not a recognition benchmark. The strings below are
+hand-written illustrations, not output of any speech recognizer, so no WER here says anything
+about how well Care understands dysarthric speech. Real measurements on TORGO audio are in
+docs/TORGO_CARE_MODE_BENCHMARK.md (independent re-run: about 61% WER; the cleanup layer
+does not lower it).
+
+What is checked: the deterministic rules collapse syllable repetitions and pause fragments,
+and they do NOT repair phoneme slips or add words that were not in the input.
 """
 
 from __future__ import annotations
@@ -18,10 +24,11 @@ if str(SRC_DIR) not in sys.path:
 
 import pytest
 
+from yapclean_care.benchmark_profiles import BENCHMARK_PROFILES
 from yapclean_care.cadsr_adapter import (
     CADSRDysarthriaPromptAdapter,
 )
-from yapclean_care.wer_metrics import compute_wer
+from yapclean_care.wer_metrics import compute_wer, normalize_for_wer
 
 SAMPLES_DIR = Path(__file__).parent / "samples"
 MANIFEST_PATH = SAMPLES_DIR / "manifest.json"
@@ -74,52 +81,40 @@ def test_torgo_samples_manifest_integrity() -> None:
         assert wav_file.stat().st_size > 50_000, f"File {wav_file} is empty"
 
 
-def test_torgo_baseline_vs_cadsr_wer(cadsr_adapter: CADSRDysarthriaPromptAdapter) -> None:
-    """Verify CADSR-LM normalization achieves major WER reduction on evaluated TORGO cohort."""
-    samples = [s for s in load_torgo_samples() if s.get("baseline_asr_hypothesis")]
-    assert len(samples) >= 3, "No TORGO samples available"
+def test_rules_collapse_syllable_repetitions(cadsr_adapter: CADSRDysarthriaPromptAdapter) -> None:
+    """Stuttered syllable repetitions are a pattern the rules can resolve."""
+    case = SYNTHETIC_CASES[0]
+    normalized = cadsr_adapter.normalize(case["baseline_raw"])
+    assert compute_wer(case["reference"], normalized).wer == 0.0, normalized
 
 
-    total_base_wer = 0.0
-    total_cadsr_wer = 0.0
-
-    for item in samples:
-        ref = item["reference"]
-        raw = item["baseline_asr_hypothesis"]
-
-        base_metric = compute_wer(ref, raw)
-        normalized = cadsr_adapter.normalize(raw)
-        cadsr_metric = compute_wer(ref, normalized)
-
-        # Baseline ASR on dysarthria suffers high WER (> 50%)
-        assert base_metric.wer >= 0.50, f"Expected high baseline WER for {item['id']}, got {base_metric.percentage}%"
-        # CADSR reconstruction significantly improves accuracy (WER < 10%)
-        assert cadsr_metric.wer <= 0.10, f"CADSR WER too high for {item['id']}: {cadsr_metric.percentage}%"
-
-        total_base_wer += base_metric.wer
-        total_cadsr_wer += cadsr_metric.wer
-
-    avg_base = (total_base_wer / len(samples)) * 100.0
-    avg_cadsr = (total_cadsr_wer / len(samples)) * 100.0
-
-    # Ensure net improvement exceeds 50 percentage points
-    assert (avg_base - avg_cadsr) >= 50.0, f"Expected >50% net WER reduction, got {avg_base - avg_cadsr:.1f}%"
-
-
-@pytest.mark.parametrize("case", SYNTHETIC_CASES, ids=lambda c: c["id"])
-def test_synthetic_dysarthria_cases(
-    cadsr_adapter: CADSRDysarthriaPromptAdapter, case: dict[str, str]
+def test_rules_resolve_pause_fragments_but_not_phoneme_slips(
+    cadsr_adapter: CADSRDysarthriaPromptAdapter,
 ) -> None:
-    """Verify CADSR-LM reconstructs synthetic dysarthric speech patterns."""
-    ref = case["reference"]
-    raw = case["baseline_raw"]
+    """'doc- ... doctor' is resolvable; the slip 'uh-pointment' is not, and must stay wrong."""
+    case = SYNTHETIC_CASES[1]
+    normalized = cadsr_adapter.normalize(case["baseline_raw"])
+    before = compute_wer(case["reference"], case["baseline_raw"]).wer
+    after = compute_wer(case["reference"], normalized).wer
+    assert after < before, normalized
+    assert after > 0.0, f"rules must not know the intended word 'appointment': {normalized}"
 
-    base_metric = compute_wer(ref, raw)
+
+def _phoneme_slip_cases() -> list[tuple[str, str, str]]:
+    cases = [(c["id"], c["reference"], c["baseline_raw"]) for c in SYNTHETIC_CASES[2:]]
+    cases += [(s.id, s.reference, s.baseline_raw) for s in BENCHMARK_PROFILES if s.profile == "A"]
+    return cases
+
+
+@pytest.mark.parametrize("case_id, reference, raw", _phoneme_slip_cases())
+def test_rules_do_not_repair_phoneme_slips_or_invent_words(
+    cadsr_adapter: CADSRDysarthriaPromptAdapter, case_id: str, reference: str, raw: str
+) -> None:
+    """Rules cannot know what the speaker meant: no new words, no reference-matching output."""
     normalized = cadsr_adapter.normalize(raw)
-    cadsr_metric = compute_wer(ref, normalized)
-
-    assert cadsr_metric.wer < base_metric.wer, f"CADSR must improve WER for {case['id']}"
-    assert cadsr_metric.wer == 0.0, f"Expected perfect reconstruction for {case['id']}, got {normalized}"
+    invented = set(normalize_for_wer(normalized)) - set(normalize_for_wer(raw))
+    assert not invented, f"{case_id}: rules produced words that were not in the input: {sorted(invented)}"
+    assert compute_wer(reference, normalized).wer > 0.0, f"{case_id}: output equals the reference"
 
 
 def test_anti_hallucination_and_guardrail_preservation(

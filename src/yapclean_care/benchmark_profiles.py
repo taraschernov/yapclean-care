@@ -1,7 +1,12 @@
-"""Multi-profile benchmark definitions for atypical speech evaluation.
+"""Multi-profile test strings for the rule-based cleanup helper.
 
-Covers 4 representative cohorts:
-- Profile A: Heavy Dysarthria / Cerebral Palsy / ALS (acoustic slurring, vowel drift, TORGO)
+All `baseline_raw` strings are HAND-WRITTEN illustrations of the pattern each profile
+describes. None of them is output of a speech recognizer, and the profile-A references are
+TORGO prompt sentences only: the audio was never decoded into these strings. Nothing here
+measures recognition quality on real atypical speech (see docs/TORGO_CARE_MODE_BENCHMARK.md).
+
+Covers 4 illustrative cohorts:
+- Profile A: Phoneme slips (acoustic slurring, vowel drift): rules cannot repair these
 - Profile B: Stuttering & Cluttering (sound repetitions, prolongations, blocks)
 - Profile C: Breath Pauses / Spasms (long intra-sentence gaps > 1.2s, fragmentation)
 - Profile D: Control Group (Typical Fluent Speech - business emails, casual chat, nuance)
@@ -29,36 +34,36 @@ class BenchmarkSample:
 
 BENCHMARK_PROFILES: list[BenchmarkSample] = [
     # -------------------------------------------------------------------------
-    # Profile A: Heavy Dysarthria / Cerebral Palsy / ALS
+    # Profile A: Phoneme slips (hand-written; the rule-based helper cannot repair them)
     # -------------------------------------------------------------------------
     BenchmarkSample(
-        id="torgo_0005",
+        id="slip_voice_cracked",
         profile="A",
-        profile_name="Heavy Dysarthria (TORGO CP/ALS)",
+        profile_name="Phoneme slips (hand-written, not recognizer output)",
         description="Acoustic slurring and phoneme distortion from TORGO corpus",
         reference="When he speaks, his voice is just a bit cracked and quivers a trifle.",
         baseline_raw="When Epic is light, it does a bit crack and quivers are dripple.",
     ),
     BenchmarkSample(
-        id="torgo_0011",
+        id="slip_winter_ooze",
         profile="A",
-        profile_name="Heavy Dysarthria (TORGO CP/ALS)",
+        profile_name="Phoneme slips (hand-written, not recognizer output)",
         description="Prolonged vowels and severe articulatory imprecision",
         reference="Except in the winter when the ooze or snow or ice prevents,",
         baseline_raw="Again, in the winter window, and not our age perpents.",
     ),
     BenchmarkSample(
-        id="torgo_0053",
+        id="slip_grandfather",
         profile="A",
-        profile_name="Heavy Dysarthria (TORGO CP/ALS)",
+        profile_name="Phoneme slips (hand-written, not recognizer output)",
         description="Consonant weakening and syllable reduction",
         reference="You wished to know all about my grandfather.",
         baseline_raw="You would do not know about it, my grandpa.",
     ),
     BenchmarkSample(
-        id="dysarthria_acoustic_drift",
+        id="slip_patient_garden",
         profile="A",
-        profile_name="Heavy Dysarthria (TORGO CP/ALS)",
+        profile_name="Phoneme slips (hand-written, not recognizer output)",
         description="Phonetic drift and consonant weakening",
         reference="The patient walked slowly in the garden.",
         baseline_raw="de payshent wahked slowleh een de gahden.",
@@ -99,7 +104,7 @@ BENCHMARK_PROFILES: list[BenchmarkSample] = [
         profile_name="Breath Pauses & Spasms (>1.2s)",
         description="Prolonged breath pauses interrupting syllable boundaries",
         reference="I need to schedule a doctor appointment for tomorrow morning.",
-        baseline_raw="I need to skeh- ... schedule a doc- ... doctor uh-pointment for tomorrow mor- ... morning.",
+        baseline_raw="I need to skeh- ... schedule a doc- ... doctor appointment for tomorrow mor- ... morning.",
     ),
     BenchmarkSample(
         id="pause_intra_sentence_spasms",

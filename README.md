@@ -2,7 +2,7 @@
 ### High-Fidelity Voice Input & Normalization for Atypical, Dysarthric, and Multilingual Speech
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-21%2F21%20Passing-success.svg)](tests/)
+[![Tests](https://img.shields.io/badge/Tests-24%2F24%20Passing-success.svg)](tests/)
 [![Atypical Speech Benchmark](https://img.shields.io/badge/TORGO%20Benchmark-12%20Clinical%20Samples-brightgreen.svg)](tests/samples/manifest.json)
 [![Sweet Spot Grid Search](https://img.shields.io/badge/ASR%20Decoder-Sweet%20Spot%20Calibrated-success.svg)](docs/GRID_SEARCH_SWEET_SPOT_REPORT.md)
 [![Multilingual Audio Benchmark](https://img.shields.io/badge/Audio%20Benchmark-25%20Cases%20%7C%205%20Languages-blue.svg)](docs/MULTILINGUAL_AUDIO_BENCHMARK_REPORT.md)
@@ -12,6 +12,16 @@
 [![Polar.sh](https://img.shields.io/badge/Polar.sh-Fund%20Bounties-0052FF?logo=polar&style=flat)](https://polar.sh/taraschernov)
 
 ---
+
+> **Status (2026-11-04) - please read.** This repository is a small Python library plus tests and
+> measurements, not a finished assistive product. An audit of our own earlier text found claims that
+> are wrong or unproven (an invented "71.8% -> 0.0% WER" result, whisper.cpp/Linux/macOS/HID
+> support that does not exist, no screen-reader testing). The full list, what is real, what is
+> not solved and what funding would be for: [docs/STATUS.md](docs/STATUS.md).
+> The story of how the error happened and was found, with the real picture:
+> [docs/INVESTIGATION_2026-11-04.md](docs/INVESTIGATION_2026-11-04.md).
+> Care mode itself runs in the proprietary YapClean Windows app; the numbers below come from it.
+> Most of the code and documents here were written with AI coding assistants (Anthropic Claude, Google Gemini) under the maintainer's direction.
 
 ## 1. Overview & Social Mission
 
@@ -33,7 +43,17 @@ Standard speech-to-text tools (Whisper, Google Cloud STT, Apple Dictation, Windo
 
 Evaluated on 12 real clinical dysarthric speech recordings from the open **TORGO Database** (University of Toronto; Rudzicz et al., speakers with cerebral palsy and ALS reading the 1916 phonetic stress-test *"The Grandfather Passage"*). 
 
-Every metric is computed directly from raw unadapted audio inference with zero hardcoded phonetic replacements or synthetic fixtures:
+> **Correction (2026-10-29).** An independent re-run on the same 12 recordings
+> (production `whisper-large-v3` on Groq, current Care pipeline, our own WER code)
+> shows where the gain over the uncalibrated baseline comes from: the stronger
+> recognition model and the guardrails that stop hallucination loops and
+> foreign-script output. The LLM cleanup layer itself does **not** lower WER on
+> dysarthric speech (61.0% raw recognition vs 61.4% after Care cleanup). Other
+> engines were not better on this set (Deepgram nova-3 63.5%, Gemini audio 70.7%).
+> Twelve samples are too few for strong conclusions. Details:
+> [docs/TORGO_CARE_MODE_BENCHMARK.md](docs/TORGO_CARE_MODE_BENCHMARK.md#independent-re-run-and-correction-2026-10-29).
+
+The rows below come from runs on real audio (the rule-based helper in this repository was not involved). Only the cloud column was re-run independently; the individual clips shown are examples, not a representative sample. Cite the averages in the correction above, not this table:
 
 | Metric / Scenario | Default Whisper Small (Uncalibrated) | YapClean Calibrated Local (Small, `rep_pen=1.08`) | YapClean Cloud Care Mode (`whisper-large-v3` + Llama 3.3 70B) |
 |---|---|---|---|
@@ -66,7 +86,19 @@ Autoregressive speech foundation models (Whisper) frequently enter infinite toke
 
 ---
 
-## 3. Core Architectural Innovations
+## 3. Target architecture (NOT fully built; status table first)
+
+| Item | Status |
+|---|---|
+| Hotkey-toggled recording, typing into any Windows app, cleanup guardrails, tuned decoding, layout detection | **Built** (in the YapClean app; guardrail and decoder code published here) |
+| Pre-roll buffer and pause-tolerant VAD | **Library classes only**, tested on synthetic arrays, not wired into an app |
+| Offline `whisper.cpp` tier, <500 MB RAM, <30 ms latency | **Not built / never measured** |
+| Tier 3 relay, NGO/clinic vouchers, partners | **Not built** |
+| Switch, sip-and-puff, foot-pedal support; earcons | **Not built** |
+| Linux and macOS | **Not built** (Windows x64 only) |
+| Screen-reader coexistence (`WS_EX_NOACTIVATE`) | **Unverified**, never tested with NVDA/JAWS |
+
+The diagram below is the design we aim for, not a description of shipped software.
 
 ```
 [User Speech into Microphone]
@@ -120,8 +152,8 @@ In multilingual European societies, users frequently think and speak in their mo
 * When speech is detected in the speaker's native language, it seamlessly translates the normalized output into the target application's active layout language before typing.
 * Eliminates manual layout switching, copy-pasting into web translators, and mental context switching.
 
-### 3.3. Assistive Hardware Interface (Open HID)
-Compatible with physical accessibility switches, sip-and-puff controllers, and USB foot pedals, enabling fully hands-free desktop dictation for quadriplegic and motor-impaired individuals.
+### 3.3. Assistive Hardware Interface (Open HID) - NOT IMPLEMENTED
+Planned to be compatible with physical accessibility switches, sip-and-puff controllers, and USB foot pedals, enabling fully hands-free desktop dictation for quadriplegic and motor-impaired individuals.
 
 ---
 
@@ -139,45 +171,33 @@ pip install pytest
 ### Run Benchmark Suite
 
 ```bash
-# Run all 21 verified benchmark and unit tests
+# Run the unit tests (rule-based helper, guardrails, decoder config, buffer/VAD classes)
 pytest tests/ -v
 ```
 
-Expected output:
-```text
-tests/test_care_core.py::test_preroll_audio_buffer_push_and_clear PASSED
-tests/test_care_core.py::test_dynamic_vad_spastic_pause_accommodation PASSED
-tests/test_care_core.py::test_layout_translator_mismatch_detection PASSED
-tests/test_decoder_config.py::test_decoder_config_defaults PASSED
-tests/test_decoder_config.py::test_get_sweet_spot_config_per_model PASSED
-tests/test_dysarthria_benchmark.py::test_torgo_samples_manifest_integrity PASSED
-tests/test_dysarthria_benchmark.py::test_torgo_baseline_vs_cadsr_wer PASSED
-tests/test_multi_profile_benchmark.py::test_benchmark_profile_suite PASSED
-...
-21 passed in 0.45s
-```
+Expected: `24 passed`. These tests check code behaviour on hand-written strings; they are not a
+recognition benchmark. Real-audio measurements are in `docs/TORGO_CARE_MODE_BENCHMARK.md`.
 
 ---
 
-## 5. European Digital Rights & Grant Context
+## 5. European accessibility context
 
-* **NLnet Foundation Restack Fund:** Application submitted for an open digital public goods grant (€30,000) to advance cross-platform Linux/macOS drivers and extend clinical benchmarks to Central and Eastern European languages.
 * **European Accessibility Act (Directive 2019/882):** Built to empower public and private sector employers to satisfy accessibility workplace obligations.
-* **Permissive Open-Source Licensing:** Released under the **Apache License 2.0**.
+* **Permissive Open-Source Licensing:** Released under **Apache-2.0 OR MIT** (see `LICENSE` and `LICENSE-MIT`).
 
 ---
 
 ## 6. Community Funding & Sustainability (Sponsorship)
 
-YapClean Care is an independent digital public good released under the Apache 2.0 license. To ensure sustainable open-source development, long-term maintenance, and infrastructure subsidies for vulnerable users, we welcome recurring and one-time sponsorships:
+YapClean Care is an independent digital public good released under Apache-2.0 OR MIT. To ensure sustainable open-source development, long-term maintenance, and infrastructure subsidies for vulnerable users, we welcome recurring and one-time sponsorships:
 
 | Platform | Best For | Details & Transparency |
 |---|---|---|
-| [**GitHub Sponsors**](https://github.com/sponsors/taraschernov) | Individuals & Developers | 0% transaction fees for individual contributions; recurring monthly or one-time micro-grants. |
+| [**GitHub Sponsors**](https://github.com/sponsors/taraschernov) | Individuals & Developers | 0% transaction fees for individual contributions; recurring monthly or one-time micro-support. |
 | [**Open Collective**](https://opencollective.com/yapclean-care) | Companies & Foundations | Transparent fiscal hosting with publicly auditable expenses, invoices, and corporate tax receipts. |
 | [**Polar.sh**](https://polar.sh/taraschernov) | Feature Bounties | Pledge bounties directly to specific issues, Linux Wayland drivers, or benchmark datasets. |
 
-### How Sponsorship Funds Are Allocated:
+### How Sponsorship Funds Would Be Allocated (planned; none of this exists yet):
 1. **At-Cost Accessibility Subsidies:** Funding API allowances for quadriplegic and dysarthric users on legacy hardware who cannot run heavy on-device neural models.
 2. **Open Clinical Datasets:** Curating, annotating, and benchmarking atypical speech samples across underrepresented European languages.
 3. **Cross-Platform Drivers:** Building open virtual keyboard and Wayland/macOS accessibility integration.
